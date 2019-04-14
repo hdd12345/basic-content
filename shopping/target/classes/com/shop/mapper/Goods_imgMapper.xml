@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shop.mapper.Goods_imgMapper">
+	<insert id="insertGoods_img" parameterType="Goods_img">
+        insert into goods_img (goods_img_name,goods_id)
+         value (#{goods_img_name},#{goods_id});
+    </insert>
+    
+   
+    <select id="selectGoods_imgByGoods_id" parameterType="int" resultType="Goods_img">
+        select * from goods_img
+        <where>
+            goods_id=#{goods_id}
+        </where>
+    </select>
+    
+    <delete id="deleteGoods_img" parameterType="int">
+        delete from goods_img
+        <where>
+            goods_img_id=#{goods_img_id}
+        </where>
+    </delete>
+    
+</mapper>

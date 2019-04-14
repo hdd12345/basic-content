@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.time.dao.GoodsTypeMapper">
+  <resultMap id="BaseResultMap" type="com.time.entity.GoodsType">
+    <id column="g_type" jdbcType="INTEGER" property="gType" />
+    <result column="type_name" jdbcType="VARCHAR" property="typeName" />
+    <result column="type_parent" jdbcType="INTEGER" property="typeParent" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    g_type, type_name, type_parent
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from goodstype
+    where g_type = #{gType,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from goodstype
+    where g_type = #{gType,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.time.entity.GoodsType">
+    insert into goodstype (g_type, type_name, type_parent
+      )
+    values (#{gType,jdbcType=INTEGER}, #{typeName,jdbcType=VARCHAR}, #{typeParent,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.time.entity.GoodsType">
+    insert into goodstype
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="gType != null">
+        g_type,
+      </if>
+      <if test="typeName != null">
+        type_name,
+      </if>
+      <if test="typeParent != null">
+        type_parent,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="gType != null">
+        #{gType,jdbcType=INTEGER},
+      </if>
+      <if test="typeName != null">
+        #{typeName,jdbcType=VARCHAR},
+      </if>
+      <if test="typeParent != null">
+        #{typeParent,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.time.entity.GoodsType">
+    update goodstype
+    <set>
+      <if test="typeName != null">
+        type_name = #{typeName,jdbcType=VARCHAR},
+      </if>
+      <if test="typeParent != null">
+        type_parent = #{typeParent,jdbcType=INTEGER},
+      </if>
+    </set>
+    where g_type = #{gType,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.time.entity.GoodsType">
+    update goodstype
+    set type_name = #{typeName,jdbcType=VARCHAR},
+      type_parent = #{typeParent,jdbcType=INTEGER}
+    where g_type = #{gType,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from goodstype
+  </select>
+</mapper>

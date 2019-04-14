@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cakeshop.mapper.OrdersMapper" >
+  <resultMap id="OrdersResultMap" type="com.cakeshop.entity.OrdersInfo" >
+    <id column="orders_id" property="orders_id" jdbcType="VARCHAR" />
+    <result column="orders_num" property="orders_num" jdbcType="VARCHAR" />
+    <result column="orders_total_price" property="orders_total_price" jdbcType="DOUBLE" />
+    <result column="orders_time" property="orders_time" jdbcType="TIMESTAMP" />
+    <result column="orders_state" property="orders_state" jdbcType="VARCHAR" />
+    <result column="user_id" property="user_id" jdbcType="VARCHAR" />
+    <result column="address_id" property="address_id" jdbcType="VARCHAR" />
+    <collection property="list" ofType="OrdersitemInfo">
+    	<id column="ordersitem_id" property="ordersitem_id"/>
+    	<result column="orders_id" property="orders_id"/>
+    	<result column="goods_id" property="goods_id"/>
+    	<result column="total_price" property="total_price"/>
+    	<result column="quantity" property="quantity"/>
+    	<association property="goods" javaType="Goods">
+    		<id column="goods_id" property="goods_id"/>
+    		<result column="gname" property="gname"/>
+    		<result column="gprice" property="gprice"/>
+    		<result column="gimage" property="gimage"/>
+    		<result column="number" property="number"/>
+    		<result column="gdate" property="gdate"/>
+    		<result column="min_id" property="min_id"/>
+    		<result column="gdesc" property="gdesc"/>
+    	</association>
+    </collection>
+  </resultMap>
+  
+  <!-- <select id="selectOrdersByUser_id" parameterType="String" resultType="Orders">
+  	select * from orders 
+  	<where>
+  		user_id=#{user_id}
+  	</where>
+  </select> -->
+  
+  <select id="selectOrdersByUser_id" parameterType="String" resultMap="OrdersResultMap">
+  	SELECT * FROM (SELECT * FROM orders INNER JOIN ordersitem USING(orders_id)
+  	 WHERE orders.orders_id=ordersitem.orders_id) AS a INNER JOIN goods USING (goods_id)
+  	  WHERE a.goods_id=goods.goods_id AND a.user_id=#{user_id}
+  </select>
+  
+  <select id="selectOrdersByOrders_id" parameterType="String" resultMap="OrdersResultMap">
+  	SELECT * FROM (SELECT * FROM orders INNER JOIN ordersitem USING(orders_id)
+  	 WHERE orders.orders_id=ordersitem.orders_id) AS a INNER JOIN goods USING (goods_id)
+  	  WHERE a.goods_id=goods.goods_id AND a.orders_id=#{orders_id}
+  </select>
+  
+  <insert id="insertOrders" parameterType="Orders" useGeneratedKeys="true" keyProperty="orders_id">
+  	insert into orders 
+  	<trim prefix="(" suffix=")" suffixOverrides=",">
+  		<if test="orders_id!=null">
+  			orders_id,
+  		</if>
+  		<if test="orders_num!=null">
+  			orders_num,
+  		</if>
+  		<if test="orders_total_price!=null">
+  			orders_total_price,
+  		</if>
+  		<if test="orders_time!=null">
+  			orders_time,
+  		</if>
+  		<if test="orders_state!=null">
+  			orders_state,
+  		</if>
+  		<if test="user_id!=null">
+  			user_id,
+  		</if>
+  		<if test="orders_id!=null">
+  			address_id,
+  		</if>
+  	</trim>
+  	<trim prefix="values (" suffix=")" suffixOverrides=",">
+  		<if test="orders_id!=null">
+  			#{orders_id},
+  		</if>
+  		<if test="orders_num!=null">
+  			#{orders_num},
+  		</if>
+  		<if test="orders_total_price!=null">
+  			#{orders_total_price},
+  		</if>
+  		<if test="orders_time!=null">
+  			#{orders_time},
+  		</if>
+  		<if test="orders_state!=null">
+  			#{orders_state},
+  		</if>
+  		<if test="user_id!=null">
+  			#{user_id},
+  		</if>
+  		<if test="orders_id!=null">
+  			#{address_id},
+  		</if>
+  	</trim>
+  </insert>
+  
+  <delete id="deleteOrders" parameterType="String">
+  	delete from orders 
+  	<where>
+  		orders_id=#{orders_id}
+  	</where>
+  </delete>
+  
+  <select id="selectOrdersCount" parameterType="String" resultType="int">
+  	select count(*) from orders 
+  	<where>
+  		orders_num like '${value}%'
+  	</where>
+  </select>
+  
+  <update id="updateState" parameterType="string">
+  	update orders set orders_state='已付款' where orders_num=#{orders_num}
+  </update>
+</mapper>

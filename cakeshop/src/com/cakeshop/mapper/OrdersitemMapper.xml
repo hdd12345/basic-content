@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cakeshop.mapper.OrdersitemMapper" >
+  <resultMap id="BaseResultMap" type="com.cakeshop.entity.Ordersitem" >
+    <id column="ordersitem_id" property="ordersitemId" jdbcType="VARCHAR" />
+    <result column="orders_id" property="ordersId" jdbcType="VARCHAR" />
+    <result column="goods_id" property="goodsId" jdbcType="VARCHAR" />
+    <result column="quantity" property="quantity" jdbcType="INTEGER" />
+    <result column="total_price" property="totalPrice" jdbcType="DOUBLE" />
+  </resultMap>
+  <insert id="insertOrdersitem" parameterType="Ordersitem">
+  	insert into ordersitem 
+  	<trim prefix="(" suffix=")" suffixOverrides=",">
+  		<if test="ordersitem_id!=null">
+  			ordersitem_id,
+  		</if>
+  		<if test="orders_id!=null">
+  			orders_id,
+  		</if>
+  		<if test="goods_id!=null">
+  			goods_id,
+  		</if>
+  		<if test="quantity!=null">
+  			quantity,
+  		</if>
+  		<if test="total_price!=null">
+  			total_price,
+  		</if>
+  	</trim>
+  	<trim prefix="values (" suffix=")" suffixOverrides=",">
+  		<if test="ordersitem_id!=null">
+  			#{ordersitem_id},
+  		</if>
+  		<if test="orders_id!=null">
+  			#{orders_id},
+  		</if>
+  		<if test="goods_id!=null">
+  			#{goods_id},
+  		</if>
+  		<if test="quantity!=null">
+  			#{quantity},
+  		</if>
+  		<if test="total_price!=null">
+  			#{total_price},
+  		</if>
+  	</trim>
+  </insert>
+  
+  <select id="selectById" parameterType="String" resultType="Ordersitem">
+  	select * from ordersitem
+  	<where>
+  		ordersitem_id=#{ordersitem_id}
+  	</where>
+  </select>
+  
+  <delete id="deleteOrdersitem" parameterType="String">
+  	delete from ordersitem 
+  	<where>
+  		ordersitem_id=#{ordersitem_id}
+  	</where>
+  </delete>
+</mapper>

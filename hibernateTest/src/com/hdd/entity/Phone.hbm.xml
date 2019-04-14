@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.hdd.entity">
+	<class name="Phone" table="phone">
+		<!-- <cache usage="read-only"/> -->
+		<id	name="id">
+			<generator class="native"/>
+		</id>
+		<property name="name"/>
+		<property name="phonesize"/>
+		<!-- name为属性名称，column为外键 -->
+		<!-- 设置cascade=“all”，会自动完成关联，如果添加时没有关联对象，会自动创建一个关联对象,
+		没有特殊情况不要使用cascade，可能的使用场景：一般在一的一方需要级联删除时 -->
+		<many-to-one name="user" class="com.hdd.entity.User" column="user_id"/>
+		
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shop.mapper.OrdersMapper">
+    <resultMap type="Orders" id="selectOrdersMap">
+        <id column="orders_id" property="orders_id"/>
+        <result column="orders_num" property="orders_num"/>
+        <result column="orders_total_price" property="orders_total_price"/>
+        <result column="orders_time" property="orders_time"/>
+        <result column="user_id" property="user_id"/>
+        <result column="shop_id" property="shop_id"/>
+        <result column="address_id" property="address_id"/>
+        <result column="orders_state" property="orders_state"/>
+        <collection property="orders_detail_list" ofType="Orders_detail">
+            <id column="orders_detail_id" property="orders_detail_id"/>
+            <result column="orders_id" property="orders_id"/>
+            <result column="goods_id" property="goods_id"/>
+            <result column="quantity" property="quantity"/>
+            <result column="total_price" property="total_price"/>
+            <association property="goods" javaType="Goods">
+                <id column="goods_id" property="goods_id"/>
+                <result column="goods_num" property="goods_num"/>
+                <result column="goods_name" property="goods_name"/>
+                <result column="price" property="price"/>
+                <result column="detail" property="detail"/>
+                <result column="number" property="number"/>
+                <result column="goods_type" property="goods_type"/>
+                <result column="shop_id" property="shop_id"/>
+            </association>
+        </collection>
+    </resultMap>
+    
+    <insert id="insertOrders" parameterType="Orders" useGeneratedKeys="true"
+        keyProperty="orders_id" keyColumn="orders_id">
+        INSERT INTO orders
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orders_num!=null">
+                orders_num,
+            </if>
+            <if test="orders_total_price!=null">
+                orders_total_price,
+            </if>
+            <if test="orders_time!=null">
+                orders_time,
+            </if>
+            <if test="user_id!=null">
+                user_id,
+            </if>
+            <if test="shop_id!=null">
+                shop_id,
+            </if>
+            <if test="address_id!=null">
+                address_id,
+            </if>
+        </trim>
+        <trim prefix="value (" suffix=")" suffixOverrides=",">
+            <if test="orders_num!=null">
+                #{orders_num},
+            </if>
+            <if test="orders_total_price!=null">
+                #{orders_total_price},
+            </if>
+            <if test="orders_time!=null">
+                #{orders_time},
+            </if>
+            <if test="user_id!=null">
+                #{user_id},
+            </if>
+            <if test="shop_id!=null">
+                #{shop_id},
+            </if>
+            <if test="address_id!=null">
+                #{address_id},
+            </if>
+        </trim>
+    </insert>
+    
+    <select id="selectOrdersByUser_id" parameterType="int" resultMap="selectOrdersMap">
+        SELECT * FROM orders INNER JOIN
+         (SELECT * FROM orders_detail INNER JOIN goods USING (goods_id)
+         <where>
+             goods.`goods_id`=orders_detail.`goods_id`) AS a
+         </where>
+          USING (orders_id,shop_id)
+          <where>
+              orders.`orders_id`=a.`orders_id` and user_id=#{user_id}
+          </where>
+          ORDER BY orders.`orders_time` DESC
+    </select>
+    
+    <select id="selectOrdersByShop_id" parameterType="int" resultMap="selectOrdersMap">
+        SELECT * FROM orders INNER JOIN
+         (SELECT * FROM orders_detail INNER JOIN goods USING (goods_id)
+         <where>
+             goods.`goods_id`=orders_detail.`goods_id`) AS a
+         </where>
+          USING (orders_id,shop_id)
+          <where>
+              orders.`orders_id`=a.`orders_id` and shop_id=#{shop_id}
+          </where>
+          ORDER BY orders.`orders_time` DESC
+    </select>
+    
+    <select id="selectOrdersByState" resultMap="selectOrdersMap">
+        SELECT * FROM orders INNER JOIN
+         (SELECT * FROM orders_detail INNER JOIN goods USING (goods_id)
+         <where>
+             goods.`goods_id`=orders_detail.`goods_id`) AS a
+         </where>
+          USING (orders_id,shop_id)
+          <where>
+              orders.`orders_id`=a.`orders_id`
+               and shop_id=#{shop_id} and orders.orders_state=#{orders_state}
+          </where>
+          ORDER BY orders.`orders_time`
+    </select>
+    
+    <update id="updateOrders_state">
+        update orders set orders_state=#{orders_state}
+        <where>
+            orders_id=#{orders_id}
+        </where>
+    </update>
+    
+	<select id="selectOrders" resultMap="selectOrdersMap">
+        SELECT * FROM orders INNER JOIN
+         (SELECT * FROM orders_detail INNER JOIN goods USING (goods_id)
+         <where>
+             goods.`goods_id`=orders_detail.`goods_id`) AS a
+         </where>
+          USING (orders_id,shop_id)
+          <where>
+              orders.`orders_id`=a.`orders_id`
+               and user_id=#{user_id}
+                and a.goods_name like '%${key_word}%'
+                 order by 
+                  (case
+                  when a.goods_name =#{key_word} then 1 
+                  when a.goods_name like '${key_word}%' then 2 
+                  when a.goods_name like '%${key_word}' then 3
+                  when a.goods_name like '%${key_word}%' then 4
+                  else 0
+                  end)
+          </where>
+    </select>
+    
+	<select id="selectOrdersByDate" parameterType="string" resultType="Orders">
+	    select * from orders 
+	    <where>
+	        orders_num like '${date}%'
+	    </where>
+	</select>
+</mapper>

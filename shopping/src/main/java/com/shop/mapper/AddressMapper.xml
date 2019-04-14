@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shop.mapper.AddressMapper">
+    <insert id="insertAddress" parameterType="Address">
+        insert into address (name,phone_num,postcode,address_content,user_id)
+         value (#{name},#{phone_num},#{postcode},#{address_content},#{user_id})
+    </insert>
+    
+	<delete id="deleteAddressById" parameterType="int">
+	    delete from address
+	    <where>
+	        address_id=#{address_id}
+	    </where>
+	</delete>
+	
+	<update id="updateAddress" parameterType="Address">
+	    UPDATE address SET name=#{name},phone_num=#{phone_num},postcode=#{postcode},address_content=#{address_content}
+	    <where>
+	        address_id=#{address_id}
+	    </where>
+	</update>
+	
+	<select id="selectAddressByUser_id" parameterType="int" resultType="Address">
+	    select * from address
+	    <where>
+	        user_id=#{user_id}
+	    </where>
+	</select>
+	
+	<select id="selectAllProvince" resultType="string">
+	    SELECT area_name FROM dt_area WHERE area_parent_id=0
+	</select>
+	
+	<select id="selectCityByProvince" parameterType="string" resultType="string">
+	    SELECT area_name FROM dt_area
+	     WHERE area_parent_id=(SELECT id FROM dt_area WHERE area_name=#{province})
+	</select>
+	
+	<select id="selectAreaByCity" parameterType="string" resultType="string">
+	    SELECT area_name FROM dt_area
+	     WHERE area_parent_id=(SELECT id FROM dt_area WHERE area_name=#{city})
+	</select>
+</mapper>

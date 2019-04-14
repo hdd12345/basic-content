@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+					    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+					    http://www.springframework.org/schema/tx 
+                     	http://www.springframework.org/schema/tx/spring-tx.xsd 
+                     	http://www.springframework.org/schema/aop 
+                     	http://www.springframework.org/schema/aop/spring-aop.xsd
+					    http://www.springframework.org/schema/context 
+					    http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+    <context:annotation-config/>
+     <context:component-scan base-package="com.cakeshop.serviceImpl"></context:component-scan>
+     <context:component-scan base-package="com.cakeshop.aspect"></context:component-scan>
+     <!-- 开启注解方式aop -->
+    <aop:aspectj-autoproxy/>
+     
+     <!-- 加载配置文件 -->
+    <context:property-placeholder location="classpath:dbconfig.properties"/>
+    
+    <!-- 数据库连接池 -->
+     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close">
+         <property name="driverClassName" value="${jdbc.driver}" />  
+         <property name="url" value="${jdbc.url}" />  
+         <property name="username" value="${jdbc.username}" />  
+         <property name="password" value="${jdbc.password}" />
+         <property name="maxActive" value="30"/>
+         <property name="maxIdle" value="5"/>
+     </bean>
+
+     <!-- sqlSessionFactory配置 -->
+     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+         <!-- 加载mybatis配置文件 -->
+         <property name="configLocation" value="classpath:mybatis/SqlMapConfig.xml"/>
+         <!-- 数据源 -->
+         <property name="dataSource" ref="dataSource"/>
+         <!-- 扫描映射文件，映射文件与mapper接口同名且在同一目录时，不需在此扫描 -->
+         <!-- <property name="mapperLocations" value="classpath:com/time/mapper/*.xml"/> -->
+     </bean>
+
+     <!-- 批量配置mapper，从mapper包中扫描出mapper接口，自动创建代理对象并且在spring容器中注册
+     	遵循规范：将mapper.java和mapper.xml映射文件名称保持一致，并且在同一个目录中
+     	自动扫描出来的mapper的bean的id为mapper类名（首字母小写）-->
+     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+         <property name="basePackage" value="com.cakeshop.mapper"/>
+         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+     </bean>
+     
+    <!-- Redis连接池配置 -->
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<!-- 最大连接数 -->
+		<property name="maxTotal" value="30" />
+		<!-- 最大空闲连接数 -->
+		<property name="maxIdle" value="10" />
+		<!-- 每次释放连接的最大数目 -->
+		<property name="numTestsPerEvictionRun" value="1024" />
+		<!-- 释放连接的扫描间隔（毫秒） -->
+		<property name="timeBetweenEvictionRunsMillis" value="30000" />
+		<!-- 连接最小空闲时间 -->
+		<property name="minEvictableIdleTimeMillis" value="1800000" />
+		<!-- 连接空闲多久后释放, 当空闲时间>该值 且 空闲连接>最大空闲连接数 时直接释放 -->
+		<property name="softMinEvictableIdleTimeMillis" value="10000" />
+		<!-- 获取连接时的最大等待毫秒数,小于零:阻塞不确定的时间,默认-1 -->
+		<property name="maxWaitMillis" value="1500" />
+		<!-- 在获取连接的时候检查有效性, 默认false -->
+		<property name="testOnBorrow" value="true" />
+		<!-- 在空闲时检查有效性, 默认false -->
+		<property name="testWhileIdle" value="true" />
+		<!-- 连接耗尽时是否阻塞, false报异常,ture阻塞直到超时, 默认true -->
+		<property name="blockWhenExhausted" value="false" />
+	</bean>
+	
+	<!-- redis单机 通过连接池 -->
+	<bean id="jedisPool" class="redis.clients.jedis.JedisPool" destroy-method="close">
+		<constructor-arg name="poolConfig" ref="jedisPoolConfig"/>
+		<constructor-arg name="host" value="127.0.0.1"/>
+		<constructor-arg name="port" value="6379"/>
+		<!-- <constructor-arg name="password" value="hdd1195811561"/> -->
+	</bean>
+     
+     <!-- 事务管理器：对mybatis操作数据库事务控制，spring使用jdbc的事务控制类 -->
+     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+         <property name="dataSource" ref="dataSource"/>
+     </bean>
+     
+     <!-- 通知：配置事务属性 -->
+     <tx:advice id="tx_advice" transaction-manager="transactionManager">
+         <tx:attributes>
+             <!-- 传播行为 -->
+             <tx:method name="save*" propagation="REQUIRED"/>
+             <tx:method name="delete*" propagation="REQUIRED"/>
+             <tx:method name="update*" propagation="REQUIRED"/>
+             <tx:method name="insert*" propagation="REQUIRED"/>
+             <tx:method name="select*" propagation="SUPPORTS" read-only="true"/>
+             <tx:method name="get*" propagation="SUPPORTS" read-only="true"/>
+             <tx:method name="select*" propagation="SUPPORTS" read-only="true"/>
+         </tx:attributes>
+     </tx:advice>
+     
+     <bean id="myAspect" class="com.cakeshop.aspect.MyAspect"></bean>
+     
+     <!-- aop -->
+     <aop:config>
+         <aop:advisor advice-ref="tx_advice" pointcut="execution(* com.cakeshop.serviceImpl.*.*(..))"/>
+         <!-- <aop:aspect ref="myAspect">
+            <aop:before method="afterThrowing" pointcut="execution(* com.cakeshop.serviceImpl.*.*(..))"/>
+        </aop:aspect> -->
+     </aop:config>
+     
+    
+     <!-- 基于注解的事务 -->
+     <!-- <tx:annotation-driven transaction-manager="transactionManager"/> -->
+</beans>

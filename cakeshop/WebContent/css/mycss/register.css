@@ -1,0 +1,51 @@
+.myinput{
+	border: solid #F07818 1px;
+	width: 350px;
+	height: 30px;
+	border-radius: 5px;
+}
+#register{
+	border: solid #F07818 1px;
+	border-radius: 5px;
+	width: 120px;
+	height: 30px;
+	background:	#F4A460 ;
+}
+div img{
+	width: 120px;
+	height: 30px;
+	border: solid #F07818 1px;
+	border-radius: 10px;
+}
+#validateCode{
+	width: 120px;
+	height: 30px;
+	border: solid #F07818 1px;
+	border-radius: 5px;
+}
+#active-box{
+	padding-top:30px;
+}
+#active-box input{
+	margin-top:20px;
+	width:200px;
+	height:30px;
+	border: solid #F07818 1px;
+	border-radius: 5px;
+}
+#active{
+	margin-top:20px;
+	width: 120px;
+	height: 30px;
+	border: solid #F07818 1px;
+	border-radius: 5px;
+	background-color:#FF7F50;
+	color:#fff
+}
+#raio-box{
+	padding-top:2px;
+	width: 90px;
+	height: 28px;
+	border: solid #F07818 1px;
+	border-radius: 5px;
+}

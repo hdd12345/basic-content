@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cakeshop.mapper.CartitemMapper" >
+  <resultMap id="CartitemResultMap" type="com.cakeshop.entity.CartitemInfo" >
+    <id column="cartitem_id" property="cartitem_id" jdbcType="VARCHAR" />
+    <result column="quantity" property="quantity" jdbcType="INTEGER" />
+    <result column="cart_id" property="cart_id" jdbcType="VARCHAR" />
+    <result column="goods_id" property="goods_id" jdbcType="VARCHAR" />
+    <association property="goods" javaType="Goods">
+    	<id column="goods_id" property="goods_id"/>
+    		<result column="gname" property="gname"/>
+    		<result column="gprice" property="gprice"/>
+    		<result column="gimage" property="gimage"/>
+    		<result column="number" property="number"/>
+    		<result column="gdate" property="gdate"/>
+    		<result column="min_id" property="min_id"/>
+    		<result column="gdesc" property="gdesc"/>
+    </association>
+  </resultMap>
+  <select id="selectByCart_id" parameterType="String" resultMap="CartitemResultMap">
+  	SELECT * FROM cartitem INNER JOIN goods USING (goods_id)
+  	 WHERE cartitem.goods_id=goods.goods_id AND cartitem.cart_id=#{cart_id}
+  </select>
+  
+  <delete id="deleteCartitems" parameterType="String">
+  	DELETE FROM cartitem 
+  	<where>
+  		cartitem_id IN 
+  		<foreach collection="array" item="cartitem_ids" index="no"
+  		 open="(" close=")" separator=",">
+  			#{cartitem_ids}
+  		</foreach>
+  	</where>
+  </delete>
+  
+  <insert id="insertCartitem" parameterType="Cartitem">
+  	insert into cartitem 
+  	<trim prefix="(" suffix=")" suffixOverrides=",">
+  		<if test="cartitem_id!=null">
+  			cartitem_id,
+  		</if>
+  		<if test="quantity!=null">
+  			quantity,
+  		</if>
+  		<if test="cart_id!=null">
+  			cart_id,
+  		</if>
+  		<if test="goods_id!=null">
+  			goods_id,
+  		</if>
+  	</trim>
+  	<trim prefix="values (" suffix=")" suffixOverrides=",">
+  		<if test="cartitem_id!=null">
+  			#{cartitem_id},
+  		</if>
+  		<if test="quantity!=null">
+  			#{quantity},
+  		</if>
+  		<if test="cart_id!=null">
+  			#{cart_id},
+  		</if>
+  		<if test="goods_id!=null">
+  			#{goods_id},
+  		</if>
+  	</trim>
+  </insert>
+  
+  <update id="updateCartitem" parameterType="Cartitem">
+  	update cartitem set 
+  	<trim prefix="" suffix="" suffixOverrides=",">
+  		<if test="quantity!=null">
+  			quantity=#{quantity},
+  		</if>
+  		<if test="cart_id!=null">
+  			cart_id=#{cart_id},
+  		</if>
+  		<if test="goods_id!=null">
+  			goods_id=#{goods_id},
+  		</if>
+  	</trim>
+  	<where>
+  		cartitem_id=#{cartitem_id}
+  	</where>
+  </update>
+  
+  <select id="selectByCartitem_id" parameterType="String" resultMap="CartitemResultMap">
+  		select * from cartitem inner join goods
+  		 where cartitem.goods_id=goods.goods_id and cartitem_id=#{cartitem_id}
+  </select>
+</mapper>

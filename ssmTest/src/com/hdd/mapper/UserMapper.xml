@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace为mapper接口的全限定名 -->
+<mapper namespace="com.hdd.mapper.UserMapper">
+    <!-- 输出映射
+    id:resultMap的唯一标识
+    type:resultMap最终映射的java对象类型，可以使用别名 -->
+    <resultMap type="user" id="userResultMap">
+        <!-- id为查询结果集中唯一标识，result为普通列名映射的定义
+        column:查询出来的列名
+        property:type指定的pojo类型中的属性名 -->
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+    </resultMap>
+    
+    <resultMap type="phone" id="selectPhoneAndUser"></resultMap>
+    
+    <select id="selectUserById" parameterType="int" resultType="User">
+        select * from user where id=#{id}
+    </select>
+    <insert id="insertUser" parameterType="User">
+        insert into user (username,password) value (#{username},#{password});
+    </insert>
+    <delete id="deleteUserByid" parameterType="int">
+        delete from user where id = #{id};
+    </delete>
+    <select id="selectAllUser" resultMap="userResultMap">
+        select * from user;
+    </select>
+    <update id="updateUser" parameterType="User">
+        update user set 
+        <if test="username!=null">
+            username=#{username}
+        </if>
+        <if test="password !=null">
+            ,password=#{password}
+        </if>
+        <where>
+            id=#{id}
+        </where>
+    </update>
+    <update id="update1" >
+        update user set username=#{uuu},password=#{ppp} where id=11;
+    </update>
+    
+    <select id="selectTest" resultType="String">
+    	select u_name from user where u_id=1;
+    </select>
+</mapper>

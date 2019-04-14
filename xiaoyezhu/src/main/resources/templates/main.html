@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/>
+<title>Insert title here</title>
+<!-- 静态资源默认路径为static文件夹下 -->
+<!-- <script type="text/javascript" th:src="@{js/js1.js}"></script> -->
+</head>
+<body>
+	<span th:text="${user.username}"></span>
+	<div><span th:text="${requestparam}"></span></div>
+	<!-- th:text当值中包含标签时，直接连同标签一起显示 -->
+	<div><span th:text="${session.myparam}"></span></div>
+
+	<!-- th:utext当值中包含标签时，会解析标签然后显示 -->
+	<div><span th:utext="${utexttest}"></span></div>
+	
+	<div>
+		<span th:if="${user.username} == abcd">hhh</span>
+		<span th:unless="${user.username} == abcde">fff</span>
+	</div>
+	
+	<div th:each="user1:${userList}">
+		<span th:text="${user1.username}"></span>
+		<span th:text="${user1.password}"></span><br/>
+	</div>
+	
+	<!-- 定义对象 -->
+	<div th:object="${user}" style="color:#ff00ff;">
+		<span th:text="*{username}"></span>
+		<span th:text="*{password}"></span>
+	</div>
+	
+	<div>
+		<a th:href="@{https://www.baidu.com}">百度一下，你就知道</a>
+	</div>
+	
+</body>
+</html>

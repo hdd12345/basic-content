@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.time.dao.UserMapper">
+  <resultMap id="BaseResultMap" type="com.time.entity.User">
+    <id column="u_id" jdbcType="BIGINT" property="uId" />
+    <result column="u_name" jdbcType="VARCHAR" property="uName" />
+    <result column="u_pwd" jdbcType="VARCHAR" property="uPwd" />
+    <result column="credit" jdbcType="INTEGER" property="credit" />
+    <result column="duration" jdbcType="BIGINT" property="duration" />
+    <result column="r_type" jdbcType="INTEGER" property="rType" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    u_id, u_name, u_pwd, credit, duration, r_type
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where u_id = #{uId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user
+    where u_id = #{uId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.time.entity.User">
+    insert into user (u_id, u_name, u_pwd, 
+      credit, duration, r_type
+      )
+    values (#{uId,jdbcType=BIGINT}, #{uName,jdbcType=VARCHAR}, #{uPwd,jdbcType=VARCHAR}, 
+      #{credit,jdbcType=INTEGER}, #{duration,jdbcType=BIGINT}, #{rType,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.time.entity.User">
+    insert into user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="uId != null">
+        u_id,
+      </if>
+      <if test="uName != null">
+        u_name,
+      </if>
+      <if test="uPwd != null">
+        u_pwd,
+      </if>
+      <if test="credit != null">
+        credit,
+      </if>
+      <if test="duration != null">
+        duration,
+      </if>
+      <if test="rType != null">
+        r_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="uId != null">
+        #{uId,jdbcType=BIGINT},
+      </if>
+      <if test="uName != null">
+        #{uName,jdbcType=VARCHAR},
+      </if>
+      <if test="uPwd != null">
+        #{uPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="credit != null">
+        #{credit,jdbcType=INTEGER},
+      </if>
+      <if test="duration != null">
+        #{duration,jdbcType=BIGINT},
+      </if>
+      <if test="rType != null">
+        #{rType,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.time.entity.User">
+    update user
+    <set>
+      <if test="uName != null">
+        u_name = #{uName,jdbcType=VARCHAR},
+      </if>
+      <if test="uPwd != null">
+        u_pwd = #{uPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="credit != null">
+        credit = #{credit,jdbcType=INTEGER},
+      </if>
+      <if test="duration != null">
+        duration = #{duration,jdbcType=BIGINT},
+      </if>
+      <if test="rType != null">
+        r_type = #{rType,jdbcType=INTEGER},
+      </if>
+    </set>
+    where u_id = #{uId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.time.entity.User">
+    update user
+    set u_name = #{uName,jdbcType=VARCHAR},
+      u_pwd = #{uPwd,jdbcType=VARCHAR},
+      credit = #{credit,jdbcType=INTEGER},
+      duration = #{duration,jdbcType=BIGINT},
+      r_type = #{rType,jdbcType=INTEGER}
+    where u_id = #{uId,jdbcType=BIGINT}
+  </update>
+  
+   <select id="selectSelective" parameterType="com.time.entity.User" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where u_name=#{uName,jdbcType=VARCHAR}
+    and u_pwd = #{uPwd,jdbcType=VARCHAR}
+    and r_type = #{rType,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByUserName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where u_name = #{uName,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="sortByDuration" resultMap="BaseResultMap">
+    select 
+    u_name,duration
+    from user
+    ORDER BY duration DESC LIMIT 0,10
+  </select>
+  
+   <update id="updateCredit" parameterType="java.lang.String">
+    update user
+    set credit = credit-${consume}
+    where u_id = ${uId}
+  </update>
+</mapper>

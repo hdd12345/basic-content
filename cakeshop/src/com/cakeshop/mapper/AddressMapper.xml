@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cakeshop.mapper.AddressMapper" >
+  <resultMap id="BaseResultMap" type="com.cakeshop.entity.Address" >
+    <id column="address_id" property="addressId" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result column="postcode" property="postcode" jdbcType="VARCHAR" />
+    <result column="address_content" property="addressContent" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+  </resultMap>
+  <insert id="insertAddess" parameterType="Address"  useGeneratedKeys="true" keyProperty="addressId">
+  insert into address
+  	<trim prefix="(" suffix=")" suffixOverrides=",">
+  	<if test="address_id!=null">
+  			address_id,
+  		</if>
+  		<if test="name!=null">
+  			name,
+  		</if>
+  		<if test="telephone!=null">
+  			telephone,
+  		</if>
+  		<if test="postcode!=null">
+  			postcode,
+  		</if>
+  		<if test="address_content!=null">
+  			address_content,
+  		</if>
+  		<if test="user_id!=null">
+  			user_id,
+  		</if>
+  		
+  	</trim>
+  	  	<trim prefix="values (" suffix=")" suffixOverrides=",">
+  		<if test="address_id!=null">
+  			#{address_id},
+  		</if>
+  		<if test="name!=null">
+  			#{name},
+  		</if>
+  		<if test="telephone!=null">
+  			#{telephone},
+  		</if>
+  		<if test="postcode!=null">
+  			#{postcode},
+  		</if>
+  		<if test="address_content!=null">
+  			#{address_content},
+  		</if>
+  		<if test="user_id!=null">
+  			#{user_id},
+  		</if>
+  		
+  		
+  	</trim>
+  </insert>
+  <update id="updateAddress" parameterType="Address">
+  update address set
+    <trim prefix="" suffix="" suffixOverrides=",">
+  		<if test="address_id!=null">
+  			address_id=#{address_id},
+  		</if>
+  		<if test="name!=null">
+  			name=#{name},
+  		</if>
+  		<if test="telephone!=null">
+  			telephone=#{telephone},
+  		</if>
+  		<if test="postcode!=null">
+  			postcode=#{postcode},
+  		</if>
+  		<if test="address_content!=null">
+  			address_content=#{address_content},
+  		</if>
+  		<if test="user_id!=null">
+  			user_id=#{user_id},
+  		</if>
+  		
+  		
+  	</trim>
+  	<where>
+  	address_id=#{address_id}
+  	</where>
+  </update>
+  <delete id="deleteAddess" parameterType="String">
+  	delete from address
+  	<where>
+  		address_id=#{address_id}
+  	</where>
+  </delete>
+  <select id="selectAddress" parameterType="String" resultType="Address">
+  	select * from address
+  	<where>
+  		user_id=#{user_id}
+  	</where>
+  </select>
+  
+  <select id="selectProvince"  resultType="java.lang.String">
+  	select area_parent_id from dt_area
+  	
+  </select>
+  
+  <select id="selectCity"  resultType="java.lang.String">
+  	select * from dt_area
+  	<where>
+  		area_parent_id=#{area_parent_id}
+  	</where>
+  </select>
+</mapper>

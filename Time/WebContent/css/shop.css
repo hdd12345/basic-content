@@ -1,0 +1,22 @@
+a li section button{
+	border:2px solid 	#FF4500;
+	border-radius:5px;
+	background-color:#00ffff;
+	opacity:0.8;
+	color: #000;
+}
+#confirm-change-box{
+	display: none;
+}
+#confirm-change-btn{
+	width:120px;
+	background-color:#00CED1;
+	border:2px solid #BDB76B;
+	border-radius:5px;
+	color:#000;
+}
+#select-address{
+	width:220px;
+	border:2px solid gray;
+	border-radius:10px;
+}

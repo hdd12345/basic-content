@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace为mapper接口的全限定名 -->
+<mapper namespace="com.shop.mapper.UserMapper">
+    <insert id="insertUser" parameterType="User"
+         useGeneratedKeys="true" keyProperty="user_id" keyColumn="user_id">
+        insert into user 
+         <trim prefix="(" suffix=")" suffixOverrides=",">
+             <if test="username!=null">
+                 username,
+             </if>
+             <if test="login_pwd!=null">
+                 login_pwd,
+             </if>
+             <if test="phone_num!=null">
+                 phone_num,
+             </if>
+             <if test="pay_pwd!=null">
+                 pay_pwd,
+             </if>
+             <if test="sex!=null">
+                 sex,
+             </if>
+         </trim>
+         <trim prefix="value (" suffix=")" suffixOverrides=",">
+             <if test="username!=null">
+                 #{username},
+             </if>
+             <if test="login_pwd!=null">
+                 #{login_pwd},
+             </if>
+             <if test="phone_num!=null">
+                 #{phone_num},
+             </if>
+             <if test="pay_pwd!=null">
+                 #{pay_pwd},
+             </if>
+             <if test="sex!=null">
+                 #{sex},
+             </if>
+         </trim>
+    </insert>
+    
+    <select id="selectUser" parameterType="User" resultType="User">
+        SELECT * FROM USER
+        <where>
+            username=#{username} and login_pwd=#{login_pwd}
+        </where>
+    </select>
+    
+    <delete id="deleteUserByid" parameterType="int">
+        delete from user
+        <where>
+            user_id=#{user_id}
+        </where>
+    </delete>
+    
+    <select id="selectAllUser" resultType="User">
+        select * from user
+    </select>
+    
+    <update id="updateUser" parameterType="User">
+<!--         UPDATE USER SET username=#{username},login_pwd=#{login_pwd},phone_num=#{phone_num},
+        pay_pwd=#{pay_pwd},balance=#{balance},user_type=#{user_type},sex=#{sex},image=#{image}
+ 		<where>
+ 		    user_id=#{user_id}
+ 		</where> -->
+ 		UPDATE USER SET 
+ 		<trim suffixOverrides=",">
+ 		    <if test="username!=null">
+ 		        username=#{username},
+ 		    </if>
+ 		    <if test="login_pwd!=null">
+ 		        login_pwd=#{login_pwd},
+ 		    </if>
+ 		    <if test="phone_num!=null">
+ 		        phone_num=#{phone_num},
+ 		    </if>
+ 		    <if test="pay_pwd!=null">
+ 		        pay_pwd=#{pay_pwd},
+ 		    </if>
+ 		    <if test="balance!=null">
+ 		        balance=#{balance},
+ 		    </if>
+ 		    <if test="user_type!=null">
+ 		        user_type=#{user_type},
+ 		    </if>
+ 		    <if test="sex!=null">
+ 		        sex=#{sex},
+ 		    </if>
+ 		    <if test="image!=null">
+ 		        image=#{image},
+ 		    </if>
+ 		</trim>
+ 		<where>
+ 		    user_id=#{user_id}
+ 		</where>
+    </update>
+    
+    <select id="selectUserByUsername" parameterType="String" resultType="User">
+        select * from user
+        <where>
+            username=#{username}
+        </where>
+    </select>
+    
+    <select id="selectUserByUser_id" parameterType="int" resultType="User">
+        select * from user 
+        <where>
+            user_id=#{user_id}
+        </where>
+    </select>
+</mapper>

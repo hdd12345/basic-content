@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.hdd.entity">
+    <class name="User" table="user">
+    	<!-- <cache usage="read-only"/> -->
+        <id name="id">
+          	<generator class="native"/>
+          	<!-- <generator class="uuid"/> -->
+        </id>
+        <!-- <id>
+        	<generator class="assigned"/>
+        </id> -->
+        <property name="username" column="username"/>
+        <property name="password" column="password"/>
+        <!-- lazy=extra,会根据获取值的不同来使用不同的sql语句  -->
+        <!-- inverse=true表示不再自己这一方维护关系，先添加一，再添加多 -->
+        <set name="phoneList" lazy="extra" inverse="true">
+        	<key column="user_id"></key>
+        	<one-to-many class="com.hdd.entity.Phone"/>
+        </set>
+    </class>
+</hibernate-mapping>

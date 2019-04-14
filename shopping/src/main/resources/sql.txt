@@ -1,0 +1,118 @@
+CREATE TABLE ORDER(
+order_id INT(50) PRIMARY KEY AUTO_INCREMENT,
+order_num VARCHAR(50) NOT NULL UNIQUE,
+total_price DOUBLE NOT NULL,
+order_time TIMESTAMP NOT NULL,
+user_id INT(50) NOT NULL,
+shop_id INT(50) NOT NULL,
+CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES USER(user_id),
+CONSTRAINT shop_id FOREIGN KEY (shop_id) REFERENCES USER(shop_id)
+)
+
+CREATE TABLE orders(
+orders_id INT(50) PRIMARY KEY AUTO_INCREMENT,
+order_num VARCHAR(50) NOT NULL UNIQUE,
+total_price DOUBLE NOT NULL,
+order_time TIMESTAMP NOT NULL,
+user_id INT(50) NOT NULL,
+shop_id INT(50) NOT NULL,
+KEY fk1(user_id),
+CONSTRAINT fk1 FOREIGN KEY (user_id) REFERENCES USER(user_id),
+KEY fk2(shop_id),
+CONSTRAINT fk2 FOREIGN KEY (shop_id) REFERENCES shop(shop_id)
+)
+
+CREATE TABLE orders_detail(
+orders_detail_id INT(50) PRIMARY KEY AUTO_INCREMENT,
+orders_id INT(50) NOT NULL,
+goods_id INT(50) NOT NULL,
+quantity INT(20) NOT NULL DEFAULT 1,
+total_price DOUBLE NOT NULL DEFAULT 0,
+KEY fk3(orders_id),
+CONSTRAINT fk3 FOREIGN KEY (orders_id) REFERENCES orders(orders_id),
+KEY fk4(goods_id),
+CONSTRAINT fk4 FOREIGN KEY (goods_id) REFERENCES goods(goods_id)
+)
+
+CREATE TABLE address(
+address_id INT(50) PRIMARY KEY AUTO_INCREMENT,
+NAME VARCHAR(30) NOT NULL,
+phone_num VARCHAR(30) NOT NULL,
+postcode VARCHAR(30) NOT NULL,
+address_content VARCHAR(255) NOT NULL,
+user_id INT(50),
+KEY fk(user_id),
+CONSTRAINT fk FOREIGN KEY (user_id) REFERENCES USER(user_id)
+)
+
+
+SELECT * FROM dt_area WHERE area_parent_id=(SELECT id FROM dt_area WHERE area_name='直辖县级' LIMIT 1,1)
+
+SELECT area_name FROM dt_area WHERE area_parent_id=(SELECT id FROM dt_area WHERE area_name='湖北省')
+
+SELECT * FROM dt_area WHERE area_parent_id=429000
+
+SELECT * FROM dt_area WHERE area_name='直辖县级2'
+419000，429000，469000，659000
+
+UPDATE dt_area SET area_name='直辖县级4' WHERE id=659000
+
+CREATE TABLE cart(
+cart_id INT(50) PRIMARY KEY AUTO_INCREMENT COMMENT '购物车id',
+user_id INT(50) NOT NULL COMMENT '外键，用户id',
+FOREIGN KEY (user_id) REFERENCES USER(user_id)
+)
+
+CREATE TABLE cart_items(
+cart_items_id INT(50) PRIMARY KEY AUTO_INCREMENT COMMENT '购物车明细id',
+cart_id INT(50) NOT NULL COMMENT '外键,购物车id',
+goods_id INT(50) NOT NULL COMMENT '外键,商品id',
+quantity INT(30) NOT NULL DEFAULT 1 COMMENT '商品数量',
+total_price DOUBLE NOT NULL COMMENT '该条明细总价',
+FOREIGN KEY (cart_id) REFERENCES cart(cart_id),
+FOREIGN KEY (goods_id) REFERENCES goods(goods_id)
+)
+
+INSERT INTO USER (username,login_pwd,phone_num,pay_pwd,sex)
+         VALUE ('你好呀',123,110,123,'男');
+         
+SELECT * FROM USER WHERE username='翠花' AND login_pwd='123456'
+
+UPDATE USER SET username='翠花3',login_pwd='123456',phone_num='120',pay_pwd='123456',balance=0,user_type=1,sex='女',image='timor'
+ WHERE user_id=5
+ 
+UPDATE address SET NAME='翠花3',phone_num='119119119',postcode='435112',address_content='湖北省武汉市蔡甸区东风大道武汉商学院'
+ WHERE address_id=3 
+ 
+ SELECT * FROM address ORDER BY NAME DESC
+ 
+ SELECT area_name FROM dt_area WHERE area_parent_id=0
+ 
+ SELECT area_name FROM dt_area WHERE area_parent_id=(SELECT id FROM dt_area WHERE area_name='湖北省')
+ 
+ INSERT INTO orders (orders_num,total_price,orders_time,user_id,shop_id) VALUE ()
+ 
+SELECT * FROM orders INNER JOIN (SELECT * FROM orders_detail INNER JOIN goods USING (goods_id) WHERE goods.`goods_id`=orders_detail.`goods_id`) AS a USING (orders_id,shop_id) WHERE orders.`orders_id`=a.`orders_id` AND user_id=3 ORDER BY orders.`orders_time` DESC
+
+SELECT * FROM orders_detail INNER JOIN goods USING (goods_id) WHERE goods.`goods_id`=orders_detail.`goods_id`
+
+SELECT * FROM orders INNER JOIN (SELECT * FROM orders_detail
+ INNER JOIN goods USING (goods_id) WHERE goods.`goods_id`=orders_detail.`goods_id`) AS a
+  USING (orders_id,shop_id) WHERE orders.`orders_id`=a.`orders_id`
+               AND user_id=3
+                AND a.goods_name LIKE '%小猪%'
+                 ORDER BY 
+                  (CASE
+                  WHEN a.goods_name ='小猪' THEN 1 
+                  WHEN a.goods_name LIKE '小猪%' THEN 2 
+                  WHEN a.goods_name LIKE '%小猪' THEN 3
+                  WHEN a.goods_name LIKE '%小猪%' THEN 4
+                  ELSE 0
+                  END)
+
+SELECT * FROM orders INNER JOIN (SELECT * FROM orders_detail INNER JOIN goods USING (goods_id) WHERE goods.`goods_id`=orders_detail.`goods_id`) AS a USING (orders_id,shop_id) WHERE orders.`orders_id`=a.`orders_id` AND shop_id=2 AND orders.`orders_state`='待发货'
+
+SELECT * FROM cart_items AS a INNER JOIN goods AS b USING(goods_id) WHERE a.goods_id = b.goods_id AND a.cart_id=1
+
+ALTER TABLE cart ADD UNIQUE KEY(user_id); 
+

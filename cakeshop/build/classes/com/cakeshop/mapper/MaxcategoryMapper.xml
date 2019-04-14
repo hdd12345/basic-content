@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cakeshop.mapper.MaxcategoryMapper" >
+  <resultMap id="CategoryResultMap" type="com.cakeshop.entity.Maxcategory" >
+    <id column="max_id" property="max_id" jdbcType="VARCHAR" />
+    <result column="max_name" property="max_name" jdbcType="VARCHAR" />
+    <collection property="list" ofType="MinCategory">
+    	<id column="min_id" property="min_id"/>
+    	<result column="min_name" property="min_name"/>
+    </collection>
+  </resultMap>
+ <select id="selectMaxcategory"  resultType="Maxcategory">
+  	select * from maxcategory
+  	
+  </select>
+  <select id="selectCategory" resultMap="CategoryResultMap">
+  	select * from maxcategory inner join mincategory on maxcategory.max_id=mincategory.max_id
+  </select>
+</mapper>

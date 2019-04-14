@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.time.dao.GoodsMapper">
+	<resultMap id="BaseResultMap" type="com.time.entity.Goods">
+		<id column="g_id" jdbcType="BIGINT" property="gId" />
+		<result column="g_num" jdbcType="VARCHAR" property="gNum" />
+		<result column="g_name" jdbcType="VARCHAR" property="gName" />
+		<result column="consume" jdbcType="INTEGER" property="consume" />
+		<result column="count" jdbcType="INTEGER" property="count" />
+		<result column="g_logo" jdbcType="VARCHAR" property="gLogo" />
+		<result column="g_type" jdbcType="INTEGER" property="gType" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		g_id, g_num, g_name, consume, count, g_logo, g_type
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from goods
+		where g_id = #{gId,jdbcType=BIGINT}
+	</select>
+
+	<delete id="deleteByPrimaryKeyArray" parameterType="java.lang.Long">
+		delete from goods
+		where g_id in(
+		<foreach collection="array" index="index" item="gid"
+			separator=",">
+			#{gid,jdbcType=BIGINT}
+		</foreach>
+		)
+	</delete>
+
+	<insert id="insert" parameterType="com.time.entity.Goods">
+		insert into goods (g_id,
+		g_num, g_name,
+		consume, count, g_logo,
+		g_type)
+		values
+		(#{gId,jdbcType=BIGINT}, #{gNum,jdbcType=VARCHAR},
+		#{gName,jdbcType=VARCHAR},
+		#{consume,jdbcType=INTEGER},
+		#{count,jdbcType=INTEGER}, #{gLogo,jdbcType=VARCHAR},
+		#{gType,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="com.time.entity.Goods">
+		insert into goods
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="gId != null">
+				g_id,
+			</if>
+			<if test="gNum != null">
+				g_num,
+			</if>
+			<if test="gName != null">
+				g_name,
+			</if>
+			<if test="consume != null">
+				consume,
+			</if>
+			<if test="count != null">
+				count,
+			</if>
+			<if test="gLogo != null">
+				g_logo,
+			</if>
+			<if test="gType != null">
+				g_type,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="gId != null">
+				#{gId,jdbcType=BIGINT},
+			</if>
+			<if test="gNum != null">
+				#{gNum,jdbcType=VARCHAR},
+			</if>
+			<if test="gName != null">
+				#{gName,jdbcType=VARCHAR},
+			</if>
+			<if test="consume != null">
+				#{consume,jdbcType=INTEGER},
+			</if>
+			<if test="count != null">
+				#{count,jdbcType=INTEGER},
+			</if>
+			<if test="gLogo != null">
+				#{gLogo,jdbcType=VARCHAR},
+			</if>
+			<if test="gType != null">
+				#{gType,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.time.entity.Goods">
+		update goods
+		<set>
+			<if test="gNum != null">
+				g_num = #{gNum,jdbcType=VARCHAR},
+			</if>
+			<if test="gName != null">
+				g_name = #{gName,jdbcType=VARCHAR},
+			</if>
+			<if test="consume != null">
+				consume = #{consume,jdbcType=INTEGER},
+			</if>
+			<if test="count != null">
+				count = #{count,jdbcType=INTEGER},
+			</if>
+			<if test="gLogo != null">
+				g_logo = #{gLogo,jdbcType=VARCHAR},
+			</if>
+			<if test="gType != null">
+				g_type = #{gType,jdbcType=INTEGER},
+			</if>
+		</set>
+		where g_id = #{gId,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.time.entity.Goods">
+		update goods
+		set
+		g_num = #{gNum,jdbcType=VARCHAR},
+		g_name = #{gName,jdbcType=VARCHAR},
+		consume = #{consume,jdbcType=INTEGER},
+		count =
+		#{count,jdbcType=INTEGER},
+		g_logo = #{gLogo,jdbcType=VARCHAR},
+		g_type =
+		#{gType,jdbcType=INTEGER}
+		where g_id = #{gId,jdbcType=BIGINT}
+	</update>
+
+	<insert id="insertListSelective" parameterType="java.util.List">
+		insert into goods(g_num, g_name, consume, count, g_logo, g_type
+		)
+		values
+		<foreach collection="list" index="index" item="g" separator=",">
+			<trim prefix="(" suffix=")" suffixOverrides=",">
+				<if test="g.gNum != null">
+					#{g.gNum,jdbcType=VARCHAR},
+				</if>
+				<if test="g.gName != null">
+					#{g.gName,jdbcType=VARCHAR},
+				</if>
+				<if test="g.consume != null">
+					#{g.consume,jdbcType=INTEGER},
+				</if>
+				<if test="g.count != null">
+					#{g.count,jdbcType=INTEGER},
+				</if>
+				<if test="g.gLogo != null">
+					#{g.gLogo,jdbcType=VARCHAR},
+				</if>
+				<if test="g.gType != null">
+					#{g.gType,jdbcType=INTEGER},
+				</if>
+			</trim>
+		</foreach>
+	</insert>
+
+	<select id="selectGoods" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from goods where
+		count
+		<if test='roleType == "2"'>
+			>0
+		</if>
+		<if test='roleType == "1"'>
+			>-1
+		</if>
+		<if test="desc != null">
+			and g_name like '%${desc}%'
+		</if>
+		<if test="goodsType != null">
+			and g_type = ${goodsType}
+		</if>
+		<if test="goodsNum != null">
+			and g_num like '%${goodsNum}%'
+		</if>
+		<if test="pageNum != null">
+			limit ${pageNum},${pageTotal}
+		</if>
+	</select>
+	
+	<update id="changeGoods" parameterType="java.lang.Long">
+		update goods
+		set
+		count = count-1
+		where g_id = #{gId,jdbcType=BIGINT}
+	</update>
+</mapper>

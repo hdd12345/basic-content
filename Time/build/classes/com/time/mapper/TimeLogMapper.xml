@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.time.dao.TimeLogMapper">
+	<resultMap id="BaseResultMap" type="com.time.entity.TimeLog">
+		<id column="tl_id" jdbcType="BIGINT" property="tlId" />
+		<result column="u_id" jdbcType="BIGINT" property="uId" />
+		<result column="start" jdbcType="TIMESTAMP" property="start" />
+		<result column="expire" jdbcType="TIMESTAMP" property="expire" />
+		<result column="achieve" jdbcType="INTEGER" property="achieve" />
+		<result column="failtime" jdbcType="TIMESTAMP" property="failtime" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		tl_id, u_id, start, expire, achieve, failtime
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from time_log
+		where tl_id = #{tlId,jdbcType=BIGINT}
+	</select>
+
+	<delete id="deleteByPrimaryKeyArray" parameterType="java.lang.Long">
+		delete from time_log
+		where tl_id in(
+		<foreach collection="array" index="index" item="gid"
+			separator=",">
+			#{tlId,jdbcType=BIGINT}
+		</foreach>
+		）
+	</delete>
+
+	<insert id="insert" parameterType="com.time.entity.TimeLog">
+		insert into time_log (tl_id,
+		u_id, start,
+		expire, achieve, failtime
+		)
+		values (#{tlId,jdbcType=BIGINT},
+		#{uId,jdbcType=BIGINT},
+		#{start,jdbcType=TIMESTAMP},
+		#{expire,jdbcType=TIMESTAMP}, #{achieve,jdbcType=INTEGER},
+		#{failtime,jdbcType=TIMESTAMP}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.time.entity.TimeLog">
+		insert into time_log
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="tlId != null">
+				tl_id,
+			</if>
+			<if test="uId != null">
+				u_id,
+			</if>
+			<if test="start != null">
+				start,
+			</if>
+			<if test="expire != null">
+				expire,
+			</if>
+			<if test="achieve != null">
+				achieve,
+			</if>
+			<if test="failtime != null">
+				failtime,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="tlId != null">
+				#{tlId,jdbcType=BIGINT},
+			</if>
+			<if test="uId != null">
+				#{uId,jdbcType=BIGINT},
+			</if>
+			<if test="start != null">
+				#{start,jdbcType=TIMESTAMP},
+			</if>
+			<if test="expire != null">
+				#{expire,jdbcType=TIMESTAMP},
+			</if>
+			<if test="achieve != null">
+				#{achieve,jdbcType=INTEGER},
+			</if>
+			<if test="failtime != null">
+				#{failtime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.time.entity.TimeLog">
+		update time_log
+		<set>
+			<if test="uId != null">
+				u_id = #{uId,jdbcType=BIGINT},
+			</if>
+			<if test="start != null">
+				start = #{start,jdbcType=TIMESTAMP},
+			</if>
+			<if test="expire != null">
+				expire = #{expire,jdbcType=TIMESTAMP},
+			</if>
+			<if test="achieve != null">
+				achieve = #{achieve,jdbcType=INTEGER},
+			</if>
+			<if test="failtime != null">
+				failtime = #{failtime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where tl_id = #{tlId,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.time.entity.TimeLog">
+		update time_log
+		set u_id = #{uId,jdbcType=BIGINT},
+		start = #{start,jdbcType=TIMESTAMP},
+		expire = #{expire,jdbcType=TIMESTAMP},
+		achieve =
+		#{achieve,jdbcType=INTEGER},
+		failtime = #{failtime,jdbcType=TIMESTAMP}
+		where tl_id = #{tlId,jdbcType=BIGINT}
+	</update>
+
+	<select id="selectTimeLog" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from time_log
+		where u_id = ${uId}
+		<if test="achieve != null">
+			and achieve = ${achieve}
+		</if>
+		<if test="start != null">
+			and to_days(start) &gt;= to_days('${start}')
+		</if>
+		<if test="end != null">
+			and to_days(start) &lt;= to_days('${end}')
+		</if>
+		<if test="sort != null">
+			order by start ${sort}
+		</if>
+		<if test="pageNum != null">
+			limit ${pageNum},${pageTotal}
+		</if>
+	</select>
+</mapper>
